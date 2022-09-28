@@ -22,7 +22,7 @@ public class NRouter extends ActiveRouter {
     /** the value of nrof seconds in time unit -setting */
 	private int secondsInTimeUnit;
     // number of nodes contacted
-    private Map<DTNHost, Double> contacts;
+    private Map<DTNHost, Integer> contacts;
     public NRouter(Settings s) {
 		super(s);
 	}
@@ -33,7 +33,7 @@ public class NRouter extends ActiveRouter {
 	}
 
     private void initContacts() {
-		this.contacts = new HashMap<DTNHost, Double>();
+		this.contacts = new HashMap<DTNHost, Integer>();
 	}
     @Override
 	public void changedConnection(Connection con) {
@@ -41,10 +41,30 @@ public class NRouter extends ActiveRouter {
 
 		if (con.isUp()) {
 			DTNHost otherHost = con.getOtherNode(getHost());
-			updateDeliveryPredFor(otherHost);
-			updateTransitivePreds(otherHost);
+			if (contacts.containsKey(otherHost)) {
+				//do nothing
+			}
+			else {
+			contacts.put(otherHost, 1);
+			}
+		
 		}
 	}
+	@Override
+	public void update() {
+		super.update();
+		if (!canStartTransfer() ||isTransferring()) {
+			return; // nothing to transfer or is currently transferring
+		}
+
+		// try messages that could be delivered to final recipient
+		if (exchangeDeliverableMessages() != null) {
+			return;
+		}
+
+		tryOtherMessages();
+	}
+
 
 
     @Override
