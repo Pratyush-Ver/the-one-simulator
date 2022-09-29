@@ -19,8 +19,6 @@ import core.Settings;
 import core.SimClock;
 
 public class NRouter extends ActiveRouter {
-    /** the value of nrof seconds in time unit -setting */
-	private int secondsInTimeUnit;
     // number of nodes contacted
     private Map<DTNHost, Integer> contacts;
     public NRouter(Settings s) {
@@ -63,6 +61,39 @@ public class NRouter extends ActiveRouter {
 		}
 
 		tryOtherMessages();
+	}
+
+	private Tuple<Message, Connection> tryOtherMessages() {
+		List<Tuple<Message, Connection>> messages =
+			new ArrayList<Tuple<Message, Connection>>();
+
+		Collection<Message> msgCollection = getMessageCollection();
+
+		/* for all connected hosts collect all messages that have a higher
+		   probability of delivery by the other host */
+		for (Connection con : getConnections()) {
+			DTNHost other = con.getOtherNode(getHost());
+			NRouter othRouter = (NRouter)other.getRouter();
+
+			if (othRouter.isTransferring()) {
+				continue; // skip hosts that are transferring
+			}
+
+			for (Message m : msgCollection) {
+				if (othRouter.hasMessage(m.getId())) {
+					continue; // skip messages that the other one has
+				}
+				if (othRouter.contacts.size() > contacts.size()) {
+					// the other node has higher probability of delivery
+					messages.add(new Tuple<Message, Connection>(m,con));
+				}
+			}
+		}
+
+		if (messages.size() == 0) {
+			return null;
+		}
+		return tryMessagesForConnected(messages);	// try to send messages
 	}
 
 
