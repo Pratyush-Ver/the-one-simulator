@@ -19,7 +19,7 @@ public class NHopsRouter extends ActiveRouter{
 		super(s);
 		Settings nhopSettings = new Settings(NHOP_NS);
 
-		initialNrofCopies = nhopSettings.getInt(NROF_COPIES);
+		initialNrofCopies = nhopSettings.getInt(NROF_COPIES)+1;
         //use NHopRouter.nrofHops as setting in settings.txt
 		
 	}
@@ -42,7 +42,12 @@ public class NHopsRouter extends ActiveRouter{
 
 		
 		/* in standard S'n'W the receiving node gets only single copy */
-		nrofCopies = 1;
+		if (nrofCopies>1){
+			nrofCopies = nrofCopies-1;
+		}
+		else{
+			nrofCopies=1;
+		}
 		
 
 		msg.updateProperty(MSG_COUNT_PROPERTY, nrofCopies);

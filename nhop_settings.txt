@@ -1,4 +1,4 @@
-Scenario.name = N hops router
+Scenario.name = N hops router 2 hop
 Group.router = NHopsRouter
 #SprayAndWaitRouter.nrofCopies = 10
 #SprayAndWaitRouter.binaryMode = false
@@ -131,7 +131,7 @@ Events1.class = MessageEventGenerator
 # Creation interval in seconds (one new message every 25 to 35 seconds)
 Events1.interval = 30,40
 # Message sizes (500kB - 1MB)
-Events1.size = 500k,1M
+Events1.size = 5k,50k
 # range of message source/destination addresses
 Events1.hosts = 0,50
 # Message ID prefix
@@ -157,7 +157,7 @@ MapBasedMovement.mapFile4 = data/shops.wkt
 ## Reports - all report names have to be valid report classes
 
 # how many reports to load
-Report.nrofReports = 2
+Report.nrofReports = 3
 # length of the warm up period (simulated seconds)
 Report.warmup = 0
 # default directory of reports (can be overridden per Report with output setting)
@@ -171,6 +171,8 @@ Report.report1 = MessageStatsReport
 
 
 Report.report2 = MyReport
+
+Report.report3 = DeliveredMessagesReport
 
 
 ## Default settings for some routers settings
